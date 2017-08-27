@@ -5,5 +5,7 @@ export const Device = new Record({
   name: null,
   updatedAt: null,
   createdAt: null,
-  itIsMe: false
+  itIsMe: false,
+  os: null,
+  deviceRegistrationToken: null,
 });

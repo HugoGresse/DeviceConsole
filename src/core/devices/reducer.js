@@ -8,7 +8,7 @@ import {
     LOAD_DEVICES_SUCCESS
 } from './action-types';
 
-import { readCookie } from './utils';
+import { readDeviceUuidCookie } from './utils';
 
 export const DevicesState = new Record({
     list: new List(),
@@ -18,14 +18,14 @@ export const DevicesState = new Record({
 
 
 export function devicesReducer(state = new DevicesState(), { payload, type }) {
-    const uuidFromCookie = readCookie('uuid');
+    const deviceUuidCookie = readDeviceUuidCookie('uuid');
 
     switch (type) {
         case REGISTER_SUCCESS:
             return state.merge({
                 list: state.deleted && state.deleted.key === payload.key ?
                     state.previous :
-                    state.list.unshift(payload.set('itIsMe', (payload.key === uuidFromCookie) ? true: false))
+                    state.list.unshift(payload.set('itIsMe', (payload.key === deviceUuidCookie) ? true: false))
             });
         case LOAD_DEVICES_SUCCESS:
             return state.set('list',
@@ -33,7 +33,7 @@ export function devicesReducer(state = new DevicesState(), { payload, type }) {
                     payload.sort((a, b) => {
                         return b.updatedAt - a.updatedAt;
                     }).map(device => {
-                        device = (uuidFromCookie === device.key) ? device.set('itIsMe', true) : device;
+                        device = (deviceUuidCookie === device.key) ? device.set('itIsMe', true) : device;
                         return device
                     })
                 )

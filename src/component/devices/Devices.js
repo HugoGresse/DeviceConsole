@@ -32,6 +32,9 @@ export class Devices extends Component {
         if (platform.product) {
             name += ' ' + platform.product
         }
+        if(platform.os) {
+            name += ' ' + platform.os
+        }
         return name
     }
 
@@ -44,7 +47,7 @@ export class Devices extends Component {
     }
 
     registerCurrentDevice() {
-        this.props.createDevice(this.props.auth.id, this.state.deviceName,)
+        this.props.createDevice(this.props.auth.id, this.state.deviceName, platform.os.toString())
     }
 
     onRegisteNameChange(event) {

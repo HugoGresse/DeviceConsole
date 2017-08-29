@@ -16,7 +16,7 @@ import {
     UPDATE_DEVICE_TOKEN_SUCCESS,
     UPDATE_DEVICE_TOKEN_ERROR
 } from './action-types';
-import { createDeviceUuidCookie } from './utils';
+import { createDeviceUuidCookie } from '../utils';
 
 const devicePath = "devices"
 
@@ -80,6 +80,16 @@ function getAndUpdateToken(uid, deviceUuid) {
                 console.error('An error occurred while retrieving token. ', error);
                 dispatch(updateDeviceTokenError(error))
             });
+    }
+}
+
+export function monitorTokenRefresh() {
+    return dispatch => {
+        // Callback fired if Instance ID token is updated.
+        firebaseMessaging.onTokenRefresh(function () {
+            console.log('onTokenRefresh.');
+            dispatch(getAndUpdateToken());
+        });
     }
 }
 

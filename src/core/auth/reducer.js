@@ -1,6 +1,7 @@
 import { Record } from 'immutable';
 
 import { INIT_AUTH, SIGN_IN_SUCCESS, SIGN_OUT_SUCCESS, SIGN_IN_ERROR } from './action-types';
+import { readDeviceUuidCookie } from '../utils';
 
 export const AuthState = new Record({
   authenticated: false,
@@ -9,6 +10,7 @@ export const AuthState = new Record({
   avatar: null,
   error: null,
   name: null,
+  deviceUuid: null,
 });
 
 
@@ -21,7 +23,8 @@ export function authReducer(state = new AuthState(), {payload, type}) {
         id: payload ? payload.uid : null,
         email: payload ? payload.email : null,
         name: payload ? payload.displayName : null,
-        avatar: payload ? '' : null
+        avatar: payload ? '' : null,
+        deviceUuid: readDeviceUuidCookie()
       });
     case SIGN_OUT_SUCCESS:
       return new AuthState();

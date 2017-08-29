@@ -32,7 +32,7 @@ export class Devices extends Component {
         if (platform.product) {
             name += ' ' + platform.product
         }
-        if(platform.os) {
+        if (platform.os) {
             name += ' ' + platform.os
         }
         return name
@@ -40,6 +40,10 @@ export class Devices extends Component {
 
     componentWillMount() {
         this.props.loadDevices(this.props.auth.id)
+        if (this.props.auth.deviceUuid) {
+            // If the device is already registered, monitor notification token refresh
+            this.props.monitorTokenRefresh(this.props.auth.id, this.props.deviceUuid)
+        }
     }
 
     componentWillUnmount() {
@@ -52,7 +56,7 @@ export class Devices extends Component {
 
     onRegisteNameChange(event) {
         this.setState({
-            deviceName : event.target.value
+            deviceName: event.target.value
         })
     }
 
@@ -62,7 +66,7 @@ export class Devices extends Component {
         register =
             <Row>
                 <Col span={6}>
-                    <Input placeholder="" value={this.state.deviceName} onChange={this.onRegisteNameChange}/>
+                    <Input placeholder="" value={this.state.deviceName} onChange={this.onRegisteNameChange} />
                 </Col>
                 <Col span={6}>
                     <Button type="primary" onClick={this.registerCurrentDevice}>

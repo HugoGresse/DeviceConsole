@@ -8,7 +8,7 @@ import {
     LOAD_DEVICES_SUCCESS
 } from './action-types';
 
-import { readDeviceUuidCookie } from './utils';
+import { readDeviceUuidCookie } from '../utils';
 
 export const DevicesState = new Record({
     list: new List(),

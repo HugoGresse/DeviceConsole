@@ -1,5 +1,4 @@
-import React, { Component, PropTypes } from 'react';
-import { List } from 'immutable';
+import React, { Component } from 'react';
 import { Row, Col } from 'antd';
 import DeviceItem from './DeviceItem'
 

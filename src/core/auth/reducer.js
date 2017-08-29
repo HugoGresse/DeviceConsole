@@ -9,8 +9,7 @@ export const AuthState = new Record({
   email: null,
   avatar: null,
   error: null,
-  name: null,
-  deviceUuid: null,
+  name: null
 });
 
 
@@ -23,8 +22,7 @@ export function authReducer(state = new AuthState(), {payload, type}) {
         id: payload ? payload.uid : null,
         email: payload ? payload.email : null,
         name: payload ? payload.displayName : null,
-        avatar: payload ? '' : null,
-        deviceUuid: readDeviceUuidCookie()
+        avatar: payload ? '' : null
       });
     case SIGN_OUT_SUCCESS:
       return new AuthState();

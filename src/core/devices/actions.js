@@ -14,7 +14,8 @@ import {
     NOTIFICATION_ERROR,
     NOTIFICATION_SUCCESS,
     UPDATE_DEVICE_TOKEN_SUCCESS,
-    UPDATE_DEVICE_TOKEN_ERROR
+    UPDATE_DEVICE_TOKEN_ERROR,
+    NOTIFICATION_RECEIVED
 } from './action-types';
 import { createDeviceUuidCookie } from '../utils';
 
@@ -36,61 +37,6 @@ export function createDevice(uid, name, os) {
             dispatch(requestNotificationPermission(uid, deviceUuid));
         }).catch(error => dispatch(createDeviceError(error)));
     };
-}
-
-function requestNotificationPermission(uid, deviceUuid) {
-    console.log('requestNotificationPermission')
-    return dispatch => {
-        firebaseMessaging.requestPermission()
-            .then(function () {
-                console.info('Notification permission granted.');
-                dispatch(getAndUpdateToken(uid, deviceUuid));
-            })
-            .catch(function (error) {
-                console.log('requestNotificationPermission error', error)
-                dispatch(createDeviceError('Unable to get permission to notify. ' + error))
-            });
-    }
-}
-
-function getAndUpdateToken(uid, deviceUuid) {
-    // Get Instance ID token. Initially this makes a network call, once retrieved
-    // subsequent calls to getToken will return from cache.
-    return dispatch => {
-        firebaseMessaging.getToken()
-            .then(function (currentToken) {
-                if (currentToken) {
-                    // Update device registration on firebase
-                    let changes = {};
-                    changes['updatedAt'] = firebase.database.ServerValue.TIMESTAMP;
-                    changes['deviceRegistrationToken'] = currentToken;
-
-                    deviceList.path = uid + '/' + devicePath;
-                    deviceList.update(deviceUuid, changes)
-                        .catch(error => dispatch(updateDeviceTokenError(error)));
-
-                } else {
-                    // Show permission request.
-                    console.error('No Instance ID token available. Request permission to generate one.');
-                    // Show permission UI.
-                    dispatch(requestNotificationPermission(uid, deviceUuid));
-                }
-            })
-            .catch(function (error) {
-                console.error('An error occurred while retrieving token. ', error);
-                dispatch(updateDeviceTokenError(error))
-            });
-    }
-}
-
-export function monitorTokenRefresh() {
-    return dispatch => {
-        // Callback fired if Instance ID token is updated.
-        firebaseMessaging.onTokenRefresh(function () {
-            console.log('onTokenRefresh.');
-            dispatch(getAndUpdateToken());
-        });
-    }
 }
 
 export function createDeviceError(error) {
@@ -201,4 +147,75 @@ export function sendNotificationSuccess(device) {
         type: NOTIFICATION_SUCCESS,
         payload: device
     };
+}
+
+function notificationReceived(payload) {
+    return {
+        type: NOTIFICATION_RECEIVED,
+        payload: payload
+    };
+}
+
+function requestNotificationPermission(uid, deviceUuid) {
+    console.log('requestNotificationPermission')
+    return dispatch => {
+        firebaseMessaging.requestPermission()
+            .then(function () {
+                console.info('Notification permission granted.');
+                dispatch(getAndUpdateToken(uid, deviceUuid));
+            })
+            .catch(function (error) {
+                console.log('requestNotificationPermission error', error)
+                dispatch(createDeviceError('Unable to get permission to notify. ' + error))
+            });
+    }
+}
+
+function getAndUpdateToken(uid, deviceUuid) {
+    // Get Instance ID token. Initially this makes a network call, once retrieved
+    // subsequent calls to getToken will return from cache.
+    return dispatch => {
+        firebaseMessaging.getToken()
+            .then(function (currentToken) {
+                if (currentToken) {
+                    // Update device registration on firebase
+                    let changes = {};
+                    changes['updatedAt'] = firebase.database.ServerValue.TIMESTAMP;
+                    changes['deviceRegistrationToken'] = currentToken;
+
+                    deviceList.path = uid + '/' + devicePath;
+                    deviceList.update(deviceUuid, changes)
+                        .catch(error => dispatch(updateDeviceTokenError(error)));
+
+                } else {
+                    // Show permission request.
+                    console.error('No Instance ID token available. Request permission to generate one.');
+                    // Show permission UI.
+                    dispatch(requestNotificationPermission(uid, deviceUuid));
+                }
+            })
+            .catch(function (error) {
+                console.error('An error occurred while retrieving token. ', error);
+                dispatch(updateDeviceTokenError(error))
+            });
+    }
+}
+
+export function monitorTokenRefresh() {
+    return dispatch => {
+        // Callback fired if Instance ID token is updated.
+        firebaseMessaging.onTokenRefresh(function () {
+            console.log('onTokenRefresh.');
+            dispatch(getAndUpdateToken());
+        });
+    }
+}
+
+export function listenNotification() {
+    return dispatch => {
+        firebaseMessaging.onMessage(function (payload) {
+            console.info("Message received. ", payload.notification);
+            dispatch(notificationReceived(payload.notification));
+        });
+    }
 }

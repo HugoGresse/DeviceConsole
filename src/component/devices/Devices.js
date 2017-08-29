@@ -2,9 +2,9 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { createSelector } from 'reselect';
 import platform from 'platform';
-import { Row, Col, Button, Input } from 'antd';
+import { Row, Col, Button, Input, Icon, notification } from 'antd';
 
-import { getDevices, devicesActions } from '../../core/devices';
+import { getDevices, getNotification, isRegistered, devicesActions } from '../../core/devices';
 import { getAuth } from '../../core/auth';
 
 import DeviceList from './DeviceList'
@@ -22,6 +22,7 @@ export class Devices extends Component {
 
         this.registerCurrentDevice = this.registerCurrentDevice.bind(this)
         this.onRegisteNameChange = this.onRegisteNameChange.bind(this)
+        this.openNotificationLink = this.openNotificationLink.bind(this)
     }
 
     getDeviceName() {
@@ -40,6 +41,7 @@ export class Devices extends Component {
 
     componentWillMount() {
         this.props.loadDevices(this.props.auth.id)
+        this.props.listenNotification()
         if (this.props.auth.deviceUuid) {
             // If the device is already registered, monitor notification token refresh
             this.props.monitorTokenRefresh(this.props.auth.id, this.props.deviceUuid)
@@ -48,6 +50,26 @@ export class Devices extends Component {
 
     componentWillUnmount() {
         this.props.unloadDevices()
+    }
+
+    componentWillReceiveProps(nextProps) {
+        if (this.props.notification != nextProps.notification) {
+
+            const btn = (
+                <Button type="primary" size="small" onClick={this.openNotificationLink}>
+                    Open
+                </Button>
+            );
+
+            notification.open({
+                message: nextProps.notification.title,
+                description: nextProps.notification.body,
+                icon: <img src={nextProps.notification.icon} />,
+                btn,
+                duration: 15
+            });
+        }
+
     }
 
     registerCurrentDevice() {
@@ -60,21 +82,22 @@ export class Devices extends Component {
         })
     }
 
-    render() {
-        let register = "";
+    openNotificationLink() {
+        window.open(this.props.notification.click_action, '_blank');
+    }
 
-        register =
+    render() {
+        const register = !this.props.isRegistered &&
             <Row>
-                <Col span={6}>
+                <Col span={16}>
                     <Input placeholder="" value={this.state.deviceName} onChange={this.onRegisteNameChange} />
                 </Col>
-                <Col span={6}>
+                <Col span={8}>
                     <Button type="primary" onClick={this.registerCurrentDevice}>
                         Register
                     </Button>
                 </Col>
             </Row >
-
 
         return (
             <Row>
@@ -97,9 +120,13 @@ export class Devices extends Component {
 const mapStateToProps = createSelector(
     getDevices,
     getAuth,
-    (devices, auth) => ({
+    getNotification,
+    isRegistered,
+    (devices, auth, notification, isRegistered) => ({
         devices,
-        auth
+        auth,
+        notification,
+        isRegistered
     })
 );
 

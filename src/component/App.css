@@ -24,3 +24,11 @@
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
 }
+
+.content {
+  width: 100%;
+  max-width: 900px;
+  margin: 0 auto;
+  background: #fafafa;
+  padding: 50px;
+}

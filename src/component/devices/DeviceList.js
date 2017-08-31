@@ -11,6 +11,7 @@ class DeviceList extends Component {
                 <DeviceItem
                     device={device}
                     key={index}
+                    sendNotification={this.props.sendNotification}
                 />
             );
         });
@@ -18,13 +19,10 @@ class DeviceList extends Component {
         return (
             <div>
                 <Row>
-                    <Col span={8}>
-                        <h3>Id</h3>
-                    </Col>
-                    <Col span={6}>
+                    <Col span={10}>
                         <h3>Name</h3>
                     </Col>
-                    <Col span={4}>
+                    <Col span={8}>
                         <h3>Updated</h3>
                     </Col>
                 </Row>

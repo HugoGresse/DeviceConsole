@@ -128,11 +128,25 @@ export function updateDeviceTokenError(error) {
 
 /////////////////////// NOTIFICATION
 
-export function sendNotification(device) {
+export function sendNotification(device, content) {
     return dispatch => {
-        deviceList.remove(device.key)
-            .catch(error => dispatch(sendNotificationError(error)));
-    };
+        fetch('https://us-central1-deviceconsole-aa589.cloudfunctions.net/notify', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                to: device.deviceRegistrationToken,
+                title: content,
+                link: content
+            })
+        })
+            .then(function (response) {
+                dispatch(sendNotificationSuccess());
+            }).then(function (error) {
+                dispatch(sendNotificationError(error));
+            });
+    }
 }
 
 export function sendNotificationError(error) {
@@ -142,10 +156,9 @@ export function sendNotificationError(error) {
     };
 }
 
-export function sendNotificationSuccess(device) {
+export function sendNotificationSuccess() {
     return {
-        type: NOTIFICATION_SUCCESS,
-        payload: device
+        type: NOTIFICATION_SUCCESS
     };
 }
 

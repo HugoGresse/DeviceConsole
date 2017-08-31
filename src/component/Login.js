@@ -1,5 +1,6 @@
-import React, { Component, PropTypes } from 'react'
+import React, { Component } from 'react'
 import { Layout, Row, Col, Button } from 'antd'
+import PropTypes from 'prop-types';
 
 import { connect } from 'react-redux';
 import { createSelector } from 'reselect';

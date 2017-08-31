@@ -9,7 +9,7 @@ import {
     NOTIFICATION_RECEIVED
 } from './action-types';
 
-import Notification from './notification';
+import { NotificationRecord } from './notification';
 import { readDeviceUuidCookie } from '../utils';
 
 export const DevicesState = new Record({
@@ -27,7 +27,7 @@ export function devicesReducer(state = getInitialState(), { payload, type }) {
             return state.merge({
                 list: state.deleted && state.deleted.key === payload.key ?
                     state.previous :
-                    state.list.unshift(setItIsMe(payload)),
+                    setItIsMe(state.list.unshift(payload), readDeviceUuidCookie('uuid')),
                 isRegistered: !!readDeviceUuidCookie('uuid')
             });
         case LOAD_DEVICES_SUCCESS:
@@ -46,7 +46,7 @@ export function devicesReducer(state = getInitialState(), { payload, type }) {
                 error: payload.message
             })
         case NOTIFICATION_RECEIVED:
-            return state.set('notification', new Notification(payload));
+            return state.set('notification', new NotificationRecord(payload));
         default:
             return state;
     }

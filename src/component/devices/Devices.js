@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { createSelector } from 'reselect';
 import platform from 'platform';
-import { Row, Col, Button, Input, Icon, notification } from 'antd';
+import { Row, Col, Button, Input, notification } from 'antd';
 
 import { getDevices, getNotification, isRegistered, devicesActions } from '../../core/devices';
 import { getAuth } from '../../core/auth';
@@ -11,7 +11,6 @@ import DeviceList from './DeviceList'
 
 
 export class Devices extends Component {
-
 
     constructor() {
         super();
@@ -34,7 +33,11 @@ export class Devices extends Component {
             name += ' ' + platform.product
         }
         if (platform.os) {
-            name += ' ' + platform.os
+            if (platform.os.toString().startsWith('OS X')) {
+                name += ' OS X'
+            } else {
+                name += ' ' + platform.os
+            }
         }
         return name
     }
@@ -53,8 +56,7 @@ export class Devices extends Component {
     }
 
     componentWillReceiveProps(nextProps) {
-        if (this.props.notification != nextProps.notification) {
-
+        if (this.props.notification !== nextProps.notification) {
             const btn = (
                 <Button type="primary" size="small" onClick={this.openNotificationLink}>
                     Open
@@ -64,7 +66,7 @@ export class Devices extends Component {
             notification.open({
                 message: nextProps.notification.title,
                 description: nextProps.notification.body,
-                icon: <img src={nextProps.notification.icon} />,
+                icon: <img src={nextProps.notification.icon} alt="" />,
                 btn,
                 duration: 15
             });
@@ -93,7 +95,7 @@ export class Devices extends Component {
                     <Input placeholder="" value={this.state.deviceName} onChange={this.onRegisteNameChange} />
                 </Col>
                 <Col span={8}>
-                    <Button type="primary" onClick={this.registerCurrentDevice}>
+                    <Button type="primary" onClick={this.registerCurrentDevice} style={{ marginLeft: '10px' }}>
                         Register
                     </Button>
                 </Col>
@@ -105,7 +107,10 @@ export class Devices extends Component {
                     <h1>Devices</h1>
                     {register}
                     <br />
-                    <DeviceList devices={this.props.devices} />
+                    <DeviceList
+                        devices={this.props.devices}
+                        sendNotification={this.props.sendNotification}
+                    />
                 </Col>
             </Row>
         );

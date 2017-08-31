@@ -1,7 +1,6 @@
 import { Record } from 'immutable';
 
 import { INIT_AUTH, SIGN_IN_SUCCESS, SIGN_OUT_SUCCESS, SIGN_IN_ERROR } from './action-types';
-import { readDeviceUuidCookie } from '../utils';
 
 export const AuthState = new Record({
   authenticated: false,

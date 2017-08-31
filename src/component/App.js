@@ -1,8 +1,7 @@
 import React, { Component } from 'react';
 import { CookiesProvider } from 'react-cookie';
-import { Layout} from 'antd';
+import { Layout } from 'antd';
 
-import logo from './logo.svg';
 import './App.css';
 
 const { Header, Content, Footer } = Layout;
@@ -12,16 +11,18 @@ class App extends Component {
     render() {
         return (
             <Layout>
-                <Header>
-                    <img src={logo} className="App-logo" alt="logo" /></Header>
+                <Header style={{textAlign: 'center'}}>
+                    <i className="material-icons" style={{color:'white', fontSize:'40px', marginTop:'10px'}}>touch_app</i>
+                    <span style={{color:'white'}}>DeviceConsole</span>
+                </Header>
                 <Layout>
-                    <Content style={{ padding: '0 50px' }}>
+                    <Content className="content">
                         <CookiesProvider style={{ background: '#fff', padding: 24, minHeight: 280 }}>
                             {this.props.children}
                         </CookiesProvider>
                     </Content>
                 </Layout>
-                <Footer>Hugo Copyright ©2017</Footer>
+                <Footer style={{ textAlign: 'center' }}><a href="https://hugo.gresse.io" style={{ color: '#222' }}>Hugo Copyright ©2017</a></Footer>
             </Layout>
         );
     }

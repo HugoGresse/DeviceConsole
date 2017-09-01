@@ -40,7 +40,7 @@ export class Login extends Component {
         } else {
             this.setState({
                 login: false,
-                error: "Unknown error"
+                error: "Unknown error..."
             });
         }
     }

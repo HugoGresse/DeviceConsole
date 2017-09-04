@@ -15,7 +15,8 @@ import {
     NOTIFICATION_SUCCESS,
     UPDATE_DEVICE_TOKEN_SUCCESS,
     UPDATE_DEVICE_TOKEN_ERROR,
-    NOTIFICATION_RECEIVED
+    NOTIFICATION_RECEIVED,
+    UNLOAD_DEVICES_DONE
 } from './action-types';
 import { createDeviceUuidCookie } from '../utils';
 
@@ -123,6 +124,11 @@ export function updateDeviceTokenError(error) {
     };
 }
 
+export function unloadDevices(){
+    return {
+        type: UNLOAD_DEVICES_DONE
+    };
+}
 
 
 

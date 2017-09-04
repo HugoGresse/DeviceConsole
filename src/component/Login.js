@@ -61,16 +61,32 @@ export class Login extends Component {
                 <Layout>
                     <Content style={{ textAlign: 'center' }}>
 
-                        <Row type="flex" justify="center" align="middle"  style={{ background: '#fff', padding: 24}}>
+                        <Row type="flex" justify="center" align="middle" style={{ background: '#fff', padding: 24 }}>
                             <Col span={24}>
-                                <h1> DeviceConsole </h1>
+                                <h1>
+                                    <i className="material-icons" style={{ fontSize: '40px', marginTop: '10px' }}>touch_app</i>
+                                    <span >DeviceConsole</span>
+                                </h1>
+                                <br />
                                 <br />
                                 <Button type="primary" onClick={this.onLoginClick}>Login</Button>
                             </Col>
                             <Col span={24}>
                                 <div className="error">
-                                    { this.state.error ? this.state.error : ''}
+                                    {this.state.error ? this.state.error : ''}
                                 </div>
+                            </Col>
+                        </Row>
+
+                        <Row type="flex" justify="center" align="middle" style={{ background: '#fff', padding: 24 }}>
+                            <Col span={24}>
+                                <h2>DeviceConsole is a fast way to share a text/url to one devices of a fleet.</h2>
+                                <br />
+                                <p style={{ fontSize: '14px' }}>  It is a free & open source software that allow a single Google accounts to: </p>
+                                <ul>
+                                    <li>- register many devices through modern browser supporting service worker</li>
+                                    <li>- send text or url to this devices</li>
+                                </ul>
                             </Col>
                         </Row>
 
@@ -87,16 +103,16 @@ export class Login extends Component {
 //-------------------------------------
 
 const mapStateToProps = createSelector(
-  getAuth,
-  auth => ({ auth })
+    getAuth,
+    auth => ({ auth })
 );
 
 const mapDispatchToProps = Object.assign(
-  {},
-  authActions
+    {},
+    authActions
 );
 
 export default connect(
-  mapStateToProps,
-  mapDispatchToProps
+    mapStateToProps,
+    mapDispatchToProps
 )(Login);

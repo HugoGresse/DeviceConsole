@@ -1,4 +1,5 @@
 import { Record } from 'immutable';
+import md5 from 'md5';
 
 import { INIT_AUTH, SIGN_IN_SUCCESS, SIGN_OUT_SUCCESS, SIGN_IN_ERROR } from './action-types';
 
@@ -21,7 +22,7 @@ export function authReducer(state = new AuthState(), {payload, type}) {
         id: payload ? payload.uid : null,
         email: payload ? payload.email : null,
         name: payload ? payload.displayName : null,
-        avatar: payload ? '' : null
+        avatar: payload ? 'https://www.gravatar.com/avatar/' + md5(payload.email) : null
       });
     case SIGN_OUT_SUCCESS:
       return new AuthState();

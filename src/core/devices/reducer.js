@@ -6,7 +6,8 @@ import {
     UNREGISTER_SUCCESS,
     UNREGISTER_ERROR,
     LOAD_DEVICES_SUCCESS,
-    NOTIFICATION_RECEIVED
+    NOTIFICATION_RECEIVED,
+    UNLOAD_DEVICES_DONE
 } from './action-types';
 
 import { NotificationRecord } from './notification';
@@ -47,6 +48,8 @@ export function devicesReducer(state = getInitialState(), { payload, type }) {
             })
         case NOTIFICATION_RECEIVED:
             return state.set('notification', new NotificationRecord(payload));
+        case UNLOAD_DEVICES_DONE:
+            return getInitialState();
         default:
             return state;
     }

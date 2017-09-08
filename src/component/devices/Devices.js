@@ -1,13 +1,13 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { createSelector } from 'reselect';
-import platform from 'platform';
-import { Row, Col, Button, Input, notification } from 'antd';
+import { Row, Col, Button, notification } from 'antd';
 
 import { getDevices, getNotification, isRegistered, devicesActions } from '../../core/devices';
 import { getAuth } from '../../core/auth';
 
 import DeviceList from './DeviceList'
+import Register from './Register'
 
 
 export class Devices extends Component {
@@ -15,31 +15,7 @@ export class Devices extends Component {
     constructor() {
         super();
 
-        this.state = {
-            deviceName: this.getDeviceName()
-        };
-
-        this.registerCurrentDevice = this.registerCurrentDevice.bind(this)
-        this.onRegisteNameChange = this.onRegisteNameChange.bind(this)
         this.openNotificationLink = this.openNotificationLink.bind(this)
-    }
-
-    getDeviceName() {
-        let name = platform.name;
-        if (platform.manufacturer) {
-            name += ' ' + platform.manufacturer
-        }
-        if (platform.product) {
-            name += ' ' + platform.product
-        }
-        if (platform.os) {
-            if (platform.os.toString().startsWith('OS X')) {
-                name += ' OS X'
-            } else {
-                name += ' ' + platform.os
-            }
-        }
-        return name
     }
 
     componentWillMount() {
@@ -74,38 +50,18 @@ export class Devices extends Component {
 
     }
 
-    registerCurrentDevice() {
-        this.props.createDevice(this.props.auth.id, this.state.deviceName, platform.os.toString())
-    }
-
-    onRegisteNameChange(event) {
-        this.setState({
-            deviceName: event.target.value
-        })
-    }
-
     openNotificationLink() {
         window.open(this.props.notification.click_action, '_blank');
     }
 
     render() {
-        const register = !this.props.isRegistered &&
-            <Row>
-                <Col span={16}>
-                    <Input placeholder="" value={this.state.deviceName} onChange={this.onRegisteNameChange} />
-                </Col>
-                <Col span={8}>
-                    <Button type="primary" onClick={this.registerCurrentDevice} style={{ marginLeft: '10px' }}>
-                        Register
-                    </Button>
-                </Col>
-            </Row >
-
         return (
             <Row>
                 <Col span={24}>
                     <h1>Devices</h1>
-                    {register}
+                    <Register
+                        auth={this.props.auth}
+                        />
                     <br />
                     <DeviceList
                         devices={this.props.devices}

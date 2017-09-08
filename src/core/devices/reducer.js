@@ -6,8 +6,10 @@ import {
     UNREGISTER_SUCCESS,
     UNREGISTER_ERROR,
     LOAD_DEVICES_SUCCESS,
+    UPDATE_DEVICES_SUCCESS,
     NOTIFICATION_RECEIVED,
-    UNLOAD_DEVICES_DONE
+    UNLOAD_DEVICES_DONE,
+    DELETE_DEVICE_SUCCESS
 } from './action-types';
 
 import { NotificationRecord } from './notification';
@@ -18,17 +20,19 @@ export const DevicesState = new Record({
     notification: null,
     filter: '',
     error: null,
-    isRegistered: false
+    isRegistered: false,
+    previous: null
 });
 
 
 export function devicesReducer(state = getInitialState(), { payload, type }) {
+
     switch (type) {
         case REGISTER_SUCCESS:
             return state.merge({
                 list: state.deleted && state.deleted.key === payload.key ?
                     state.previous :
-                    setItIsMe(state.list.unshift(payload), readDeviceUuidCookie('uuid')),
+                    setItIsMe(state.list.unshift(payload)),
                 isRegistered: !!readDeviceUuidCookie('uuid')
             });
         case LOAD_DEVICES_SUCCESS:
@@ -36,9 +40,21 @@ export function devicesReducer(state = getInitialState(), { payload, type }) {
                 new List(
                     setItIsMe(payload.sort((a, b) => {
                         return b.updatedAt - a.updatedAt;
-                    }), readDeviceUuidCookie('uuid'))
+                    }))
                 )
             );
+        case UPDATE_DEVICES_SUCCESS:
+            return state.merge({
+                previous: null,
+                list: setItIsMe(state.list.map(device => {
+                  return device.key === payload.key ? payload : device;
+                }))
+        });
+        case DELETE_DEVICE_SUCCESS:
+            return state.merge({
+                previous: state.list,
+                list: setItIsMe(state.list.filter(device => device.key !== payload.key))
+            });
         case UNREGISTER_SUCCESS:
             return new DevicesState();
         case UNREGISTER_ERROR:
@@ -61,7 +77,8 @@ function getInitialState() {
     return state.set('isRegistered', !!deviceUuidCookie);
 }
 
-function setItIsMe(deviceList, deviceUuid) {
+function setItIsMe(deviceList) {
+    const deviceUuid = readDeviceUuidCookie('uuid');
     return deviceList.map(device => {
         return (deviceUuid === device.key) ? device.set('itIsMe', true) : device
     });

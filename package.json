@@ -6,7 +6,7 @@
     "react-scripts": "1.0.10"
   },
   "dependencies": {
-    "antd": "^2.12.2",
+    "antd": "^2.13.0",
     "firebase": "^4.2.0",
     "firebase-messaging": "^1.0.6",
     "md5": "^2.2.1",

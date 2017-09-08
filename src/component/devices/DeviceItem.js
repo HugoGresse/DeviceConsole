@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Row, Col, Button, Input } from 'antd';
+import { Row, Col, Button, Input, Icon } from 'antd';
 import Time from 'react-time'
 
 
@@ -25,28 +25,22 @@ class DeviceItem extends Component {
     render() {
         const name = this.props.device.name + ((this.props.device.itIsMe) ? '(me)' : '');
         return (
-            <Row style={{ marginTop: '10px' }}>
-                <Col span={10}>
+            <Row style={{ marginTop: '16px' }}>
+                <Col xs={24} md={10}>
                     {name}
                 </Col>
-                <Col span={4}>
+                <Col xs={24} md={4}>
                     <Time value={this.props.device.updatedAt} titleFormat="YYYY/MM/DD HH:mm" relative />
                 </Col>
-                <Col span={10}>
-                    <Row style={{ marginTop: '-10px' }} >
+                <Col xs={24}  md={10}>
+                    <Row >
                         <Col span={16}>
                             <Input
-                            placeholder=""
-                            onPressEnter={this.sendNotification}
+                            placeholder="Send notification"
+                            addonAfter={<Icon type="right-circle" onClick={this.sendNotification} />}
                             value={this.state.inputMessage}
+                            onPressEnter={this.sendNotification}
                             onChange={this.onMessageChange} />
-                        </Col>
-                        <Col span={8}>
-                            <Button
-                                onClick={this.sendNotification}
-                                type="primary" icon="right-square">
-                                Send
-                            </Button>
                         </Col>
                     </Row >
                 </Col>

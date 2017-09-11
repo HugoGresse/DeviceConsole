@@ -1,12 +1,14 @@
 import React, { Component } from 'react'
 import { Layout, Row, Col, Button } from 'antd'
-import PropTypes from 'prop-types';
+import PropTypes from 'prop-types'
 
-import { connect } from 'react-redux';
-import { createSelector } from 'reselect';
-import { authActions, getAuth } from '../core/auth';
+import { connect } from 'react-redux'
+import { createSelector } from 'reselect'
+import { authActions, getAuth } from '../core/auth'
 
-const { Content, Footer } = Layout
+import Footer from './Footer'
+
+const { Content } = Layout
 
 export class Login extends Component {
 
@@ -92,7 +94,7 @@ export class Login extends Component {
 
                     </Content>
                 </Layout>
-                <Footer>Hugo Copyright ©2017</Footer>
+                <Footer />
             </Layout>
         )
     }

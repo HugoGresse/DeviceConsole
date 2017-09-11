@@ -7,9 +7,10 @@ import { connect } from 'react-redux';
 import { createSelector } from 'reselect';
 import { getAuth, authActions } from '../core/auth';
 
+import Footer from './Footer'
 import './App.css';
 
-const { Header, Content, Footer } = Layout;
+const { Header, Content } = Layout;
 
 class App extends Component {
 
@@ -72,7 +73,7 @@ class App extends Component {
                         </CookiesProvider>
                     </Content>
                 </Layout>
-                <Footer style={{ textAlign: 'center' }}><a href="https://hugo.gresse.io" style={{ color: '#222' }}>Hugo Copyright ©2017</a></Footer>
+                <Footer />
             </Layout>
         );
     }

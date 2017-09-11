@@ -8,4 +8,6 @@ export const Device = new Record({
   itIsMe: false,
   os: null,
   deviceRegistrationToken: null,
+  sendingNotification: false,
+  sendingNotificationError: null
 });

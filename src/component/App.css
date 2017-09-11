@@ -1,26 +1,37 @@
 @import '~antd/dist/antd.css';
 
-#root {min-height:100%;}
+#root { min-height:100%; }
 
 .App {
-  text-align: center;
+    text-align: center;
 }
 
+
+.inputWithButton .ant-input-group-addon {
+    padding: 0;
+ }
+
+.inputWithButton .ant-input-group-addon .ant-btn{
+    background: transparent;
+    border:none;
+    height:26px;
+ }
+
 .content {
-  width: 100%;
-  max-width: 900px;
-  margin: 0 auto;
-  background: #fafafa;
-  padding: 50px;
+    width: 100%;
+    max-width: 900px;
+    margin: 0 auto;
+    background: #fafafa;
+    padding: 50px;
 }
 
 
 .headerAvatar {
-  cursor: pointer;
-  border-radius: 50%;
-  width: 40px;
-  right: 12px;
-  position: inherit;
-  top: 12px;
-  position: absolute;
+    cursor: pointer;
+    border-radius: 50%;
+    width: 40px;
+    right: 12px;
+    position: inherit;
+    top: 12px;
+    position: absolute;
 }

@@ -8,6 +8,9 @@ import {
     LOAD_DEVICES_SUCCESS,
     UPDATE_DEVICES_SUCCESS,
     NOTIFICATION_RECEIVED,
+    NOTIFICATION_SENDING,
+    NOTIFICATION_ERROR,
+    NOTIFICATION_SUCCESS,
     UNLOAD_DEVICES_DONE,
     DELETE_DEVICE_SUCCESS
 } from './action-types';
@@ -47,9 +50,9 @@ export function devicesReducer(state = getInitialState(), { payload, type }) {
             return state.merge({
                 previous: null,
                 list: setItIsMe(state.list.map(device => {
-                  return device.key === payload.key ? payload : device;
+                    return device.key === payload.key ? payload : device;
                 }))
-        });
+            });
         case DELETE_DEVICE_SUCCESS:
             return state.merge({
                 previous: state.list,
@@ -61,6 +64,35 @@ export function devicesReducer(state = getInitialState(), { payload, type }) {
         case REGISTER_ERROR:
             return state.merge({
                 error: payload.message
+            })
+        case NOTIFICATION_SENDING:
+            return state.merge({
+                previous: state.list,
+                list: setItIsMe(state.list.map(device => device.key === payload.deviceUuid ? device.set('sendingNotification', true) : device))
+            })
+        case NOTIFICATION_SUCCESS:
+            return state.merge({
+                previous: state.list,
+                list: setItIsMe(state.list.map(function (device) {
+                    if (device.key === payload.deviceUuid) {
+                        return device.set('sendingNotification', false)
+                    } else {
+                        return device
+                    }
+                }))
+            })
+        case NOTIFICATION_ERROR:
+            return state.merge({
+                previous: state.list,
+                list: setItIsMe(state.list.map(function (device) {
+                    if (device.key === payload.deviceUuid) {
+                        device = device.set('sendingNotification', false)
+                        console.error('Fail to send notification to ', device, ' error:', payload.error)
+                        return device.set('sendingNotificationError', payload.error)
+                    } else {
+                        return device
+                    }
+                }))
             })
         case NOTIFICATION_RECEIVED:
             return state.set('notification', new NotificationRecord(payload));

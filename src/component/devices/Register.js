@@ -48,8 +48,6 @@ export class Register extends Component {
     }
 
     componentDidUpdate(prevProps, prevState) {
-        // TODO / 1. remove modal on the first subscribe
-        // 2. add modal and remove it on a new load
         if (this.props.device && !this.props.device.deviceRegistrationToken && !prevState.modal && !this.state.modal) {
             this.setState({
                 modal: Modal.info({

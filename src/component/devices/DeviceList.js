@@ -22,10 +22,10 @@ class DeviceList extends Component {
                     <Col span={10}>
                         <h3>Name</h3>
                     </Col>
-                    <Col xs={0} md={4}>
+                    <Col xs={0} sm={4}>
                         <h3>Updated</h3>
                     </Col>
-                    <Col xs={0} md={10}>
+                    <Col xs={0} sm={10}>
                         <h3>Action</h3>
                     </Col>
                 </Row>

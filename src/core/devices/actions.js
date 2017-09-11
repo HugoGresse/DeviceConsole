@@ -12,6 +12,7 @@ import {
     UPDATE_DEVICES_SUCCESS,
     NOTIFICATION_ERROR,
     NOTIFICATION_SUCCESS,
+    NOTIFICATION_SENDING,
     UPDATE_DEVICE_TOKEN_SUCCESS,
     UPDATE_DEVICE_TOKEN_ERROR,
     NOTIFICATION_RECEIVED,
@@ -136,6 +137,7 @@ export function unloadDevices(){
 
 export function sendNotification(device, content) {
     return dispatch => {
+        dispatch(sendingNotification(device.key));
         fetch('https://us-central1-deviceconsole-aa589.cloudfunctions.net/notify', {
             method: 'POST',
             headers: {
@@ -148,23 +150,38 @@ export function sendNotification(device, content) {
             })
         })
             .then(function (response) {
-                dispatch(sendNotificationSuccess());
-            }).then(function (error) {
-                dispatch(sendNotificationError(error));
+                dispatch(sendNotificationSuccess(device.key));
+            }).catch(function (error) {
+                dispatch(sendNotificationError(device.key, error));
             });
     }
 }
 
-export function sendNotificationError(error) {
+export function sendingNotification(targetDeviceUuid) {
     return {
-        type: NOTIFICATION_ERROR,
-        payload: error
+        type: NOTIFICATION_SENDING,
+        payload : {
+            deviceUuid: targetDeviceUuid
+        }
     };
 }
 
-export function sendNotificationSuccess() {
+export function sendNotificationError(targetDeviceUuid, error) {
     return {
-        type: NOTIFICATION_SUCCESS
+        type: NOTIFICATION_ERROR,
+        payload:  {
+            deviceUuid: targetDeviceUuid,
+            error: error
+        }
+    };
+}
+
+export function sendNotificationSuccess(targetDeviceUuid) {
+    return {
+        type: NOTIFICATION_SUCCESS,
+        payload : {
+            deviceUuid: targetDeviceUuid
+        }
     };
 }
 

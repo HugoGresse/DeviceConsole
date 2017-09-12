@@ -9,8 +9,42 @@ It is a free & open source software that allow a single Google accounts to:
 
 > [deviceconsole.com](https://deviceconsole.com)
 
+Requirements
+------------
+
+1. Install npm:
+
+    brew install npm
+
+2. Install dependencies
+
+    npm install
+
+3. Run app
+
+    npm start
+
+Dev
+---
+
+This application currently use [Create React App](https://github.com/facebookincubator/create-react-app).
+
+Available Scripts
+-----------------
+
+#### Runs the app in the development mode.
+
+    npm start
 
 
+Open http://localhost:3000 to view it in the browser.
+The page will reload if you make edits & you'll see any lint errors in the console & in the browser.
+
+#### Release the app
+
+    npm run deploy
+
+It bundle the js + minify, deploy the database rules & the website to Firebase Hosting, part of GCP.
 
 Donations
 ---------

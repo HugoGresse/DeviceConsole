@@ -11,7 +11,7 @@ export default class Footer extends Component {
             <a
                 target="_blank"
                 rel="noopener noreferrer"
-                href="https://hugo.gresse.io"
+                href="https://github.com/HugoGresse/DeviceConsole"
                 style={{ color: '#222' }}>
                 <Icon
                     type="github"

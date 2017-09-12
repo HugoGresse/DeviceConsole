@@ -2,6 +2,7 @@
   "name": "device-console",
   "version": "0.0.1",
   "private": true,
+  "homepage": "https://deviceconsole.com/",
   "devDependencies": {
     "react-scripts": "1.0.10"
   },

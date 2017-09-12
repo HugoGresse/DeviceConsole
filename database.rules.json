@@ -1,6 +1,11 @@
 {
   "rules": {
-    ".read": "auth != null",
-    ".write": "auth != null"
+    ".validate": "true",
+    ".read": "false",
+    ".write": "false",
+    "$uid": {
+      ".read": "auth.uid == $uid",
+      ".write": "auth.uid == $uid"
+    }
   }
 }

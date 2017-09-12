@@ -1,0 +1,38 @@
+path / {
+  read() { false }
+  write() { false }
+}
+
+path /{uid} {
+  write() { isUser(auth, uid) }
+  read() { isUser(auth, uid) }
+}
+
+//////////////////////////////
+// TYPE
+//////////////////////////////
+
+type Timestamped<T> extends T {
+  updatedAt: CurrentTimestamp,
+  createdAt: InitialTimestamp
+}
+
+type CurrentTimestamp extends Number {
+  validate() { this == now }
+}
+
+type InitialTimestamp extends Number {
+  validate() { initial(this, now) }
+}
+
+// Returns true if the value is intialized to init, or retains it's prior
+// value, otherwise.
+initial(value, init) { value == (prior(value) == null ? init : prior(value)) }
+
+//////////////////////////////
+// Function
+//////////////////////////////
+
+function isUser(auth, userKey) {
+  return auth.uid == userKey;
+}

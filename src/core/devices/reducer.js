@@ -56,6 +56,7 @@ export function devicesReducer(state = getInitialState(), { payload, type }) {
         case DELETE_DEVICE_SUCCESS:
             return state.merge({
                 previous: state.list,
+                isRegistered: !!readDeviceUuidCookie('uuid'),
                 list: setItIsMe(state.list.filter(device => device.key !== payload.key))
             });
         case UNREGISTER_SUCCESS:
@@ -84,11 +85,10 @@ export function devicesReducer(state = getInitialState(), { payload, type }) {
         case NOTIFICATION_ERROR:
             return state.merge({
                 previous: state.list,
+                error:  payload.error,
                 list: setItIsMe(state.list.map(function (device) {
                     if (device.key === payload.deviceUuid) {
-                        device = device.set('sendingNotification', false)
-                        console.error('Fail to send notification to ', device, ' error:', payload.error)
-                        return device.set('sendingNotificationError', payload.error)
+                        return device.set('sendingNotification', false)
                     } else {
                         return device
                     }

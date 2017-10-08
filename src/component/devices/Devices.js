@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { createSelector } from 'reselect';
 import { Row, Col, Button, notification } from 'antd';
 
-import { getDevices, getNotification, isRegistered, devicesActions } from '../../core/devices';
+import { getDevices, getNotification, isRegistered, getError, devicesActions } from '../../core/devices';
 import { getAuth } from '../../core/auth';
 
 import DeviceList from './DeviceList'
@@ -48,6 +48,12 @@ export class Devices extends Component {
             });
         }
 
+        if(this.props.error !== nextProps.error) {
+            notification.open({
+                message: 'Error: ' + nextProps.error,
+                duration: 15
+            });
+        }
     }
 
     openNotificationLink() {
@@ -66,6 +72,8 @@ export class Devices extends Component {
                     <DeviceList
                         devices={this.props.devices}
                         sendNotification={this.props.sendNotification}
+                        setDeviceName={this.props.setDeviceName}
+                        deleteDevice={this.props.deleteDevice}
                     />
                 </Col>
             </Row>
@@ -83,11 +91,13 @@ const mapStateToProps = createSelector(
     getAuth,
     getNotification,
     isRegistered,
-    (devices, auth, notification, isRegistered) => ({
+    getError,
+    (devices, auth, notification, isRegistered, error) => ({
         devices,
         auth,
         notification,
-        isRegistered
+        isRegistered,
+        error
     })
 );
 

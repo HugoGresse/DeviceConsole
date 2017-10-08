@@ -92,18 +92,21 @@ export class Register extends Component {
     render() {
         const register = !this.props.isRegistered &&
             <Row>
-                <Col span={12}>
+                <Col span={24}>
+                    Register this device
+                </Col>
+                <Col xs={24} sm={12}>
                     <Input
                         placeholder=""
                         addonAfter={<Icon type="right-circle" onClick={this.registerCurrentDevice} />}
                         value={this.state.deviceName}
                         onChange={this.onRegisteNameChange}
-                        onPressEnter={this.onRegisteNameChange} />
+                        onPressEnter={this.registerCurrentDevice} />
                 </Col>
             </Row>
 
         return (
-            <div>
+            <div style={{marginTop: "16px"}}>
                 {register}
             </div>
         );

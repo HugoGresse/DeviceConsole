@@ -14,3 +14,7 @@ export function getCurrentDevice(state) {
 export function getNotification(state) {
   return state.devices.notification;
 }
+
+export function getError(state) {
+    return state.devices.error;
+}

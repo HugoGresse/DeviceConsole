@@ -1,7 +1,7 @@
 import firebase from 'firebase';
-import { firebaseMessaging } from '../firebase';
+import {firebaseMessaging} from '../firebase';
 import uuidv4 from 'uuid/v4';
-import { deviceList } from './device-list';
+import {deviceList} from './device-list';
 import {
     REGISTER_ERROR,
     REGISTER_SUCCESS,
@@ -19,7 +19,7 @@ import {
     UNLOAD_DEVICES_DONE,
     DELETE_DEVICE_SUCCESS
 } from './action-types';
-import { createDeviceUuidCookie, readDeviceUuidCookie } from '../utils';
+import {createDeviceUuidCookie, readDeviceUuidCookie, eraseDeviceUuidCookie} from '../utils';
 
 const devicePath = "devices"
 
@@ -49,7 +49,6 @@ export function createDeviceError(error) {
 }
 
 export function createDeviceSuccess(device) {
-
     return {
         type: REGISTER_SUCCESS,
         payload: device
@@ -58,6 +57,10 @@ export function createDeviceSuccess(device) {
 
 export function deleteDevice(device) {
     return dispatch => {
+        if (readDeviceUuidCookie() === device.key) {
+            // Delete the uuid of the current device, it has been deleted remotely
+            eraseDeviceUuidCookie()
+        }
         deviceList.remove(device.key)
             .catch(error => dispatch(deleteDeviceError(error)));
     };
@@ -104,6 +107,7 @@ export function updateDeviceSuccess(device) {
         payload: device
     };
 }
+
 export function updateDevicesSuccess(device) {
     return {
         type: UPDATE_DEVICES_SUCCESS,
@@ -125,12 +129,20 @@ export function updateDeviceTokenError(error) {
     };
 }
 
-export function unloadDevices(){
+export function unloadDevices() {
     return {
         type: UNLOAD_DEVICES_DONE
     };
 }
 
+export function setDeviceName(key, name) {
+    return dispatch => {
+        deviceList.update(key, {
+            name: name,
+            updatedAt: firebase.database.ServerValue.TIMESTAMP
+        })
+    }
+}
 
 
 /////////////////////// NOTIFICATION
@@ -152,15 +164,15 @@ export function sendNotification(device, content) {
             .then(function (response) {
                 dispatch(sendNotificationSuccess(device.key));
             }).catch(function (error) {
-                dispatch(sendNotificationError(device.key, error));
-            });
+            dispatch(sendNotificationError(device.key, error));
+        });
     }
 }
 
 export function sendingNotification(targetDeviceUuid) {
     return {
         type: NOTIFICATION_SENDING,
-        payload : {
+        payload: {
             deviceUuid: targetDeviceUuid
         }
     };
@@ -169,7 +181,7 @@ export function sendingNotification(targetDeviceUuid) {
 export function sendNotificationError(targetDeviceUuid, error) {
     return {
         type: NOTIFICATION_ERROR,
-        payload:  {
+        payload: {
             deviceUuid: targetDeviceUuid,
             error: error
         }
@@ -179,7 +191,7 @@ export function sendNotificationError(targetDeviceUuid, error) {
 export function sendNotificationSuccess(targetDeviceUuid) {
     return {
         type: NOTIFICATION_SUCCESS,
-        payload : {
+        payload: {
             deviceUuid: targetDeviceUuid
         }
     };

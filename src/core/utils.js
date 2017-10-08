@@ -8,7 +8,7 @@ export function createDeviceUuidCookie(value, days) {
     document.cookie = "deviceUuid=" + value + expires + "; path=/";
 }
 
-export function readDeviceUuidCookie(name) {
+export function readDeviceUuidCookie() {
     var nameEQ = "deviceUuid=";
     var ca = document.cookie.split(';');
     for (var i = 0; i < ca.length; i++) {
@@ -19,6 +19,6 @@ export function readDeviceUuidCookie(name) {
     return null;
 }
 
-export function eraseDeviceUuidCookie(name) {
+export function eraseDeviceUuidCookie() {
     createDeviceUuidCookie("", -1);
 }

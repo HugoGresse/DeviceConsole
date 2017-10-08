@@ -12,13 +12,15 @@ class DeviceList extends Component {
                     device={device}
                     key={index}
                     sendNotification={this.props.sendNotification}
+                    setDeviceName={this.props.setDeviceName}
+                    deleteDevice={this.props.deleteDevice}
                 />
             );
         });
 
         return (
             <div>
-                <Row>
+                <Row className="data-row-title">
                     <Col span={10}>
                         <h3>Name</h3>
                     </Col>

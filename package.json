@@ -4,6 +4,7 @@
   "private": true,
   "homepage": "https://deviceconsole.com/",
   "devDependencies": {
+    "react-edit-inline": "^1.0.8",
     "react-scripts": "1.0.10"
   },
   "dependencies": {

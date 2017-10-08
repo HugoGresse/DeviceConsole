@@ -4,7 +4,7 @@ DeviceConsole is a fast way to **share** a text/url to one devices of a fleet.
 
 It is a free & open source software that allow a single Google accounts to:
 
-- register many devices through modern browser supporting service worker
+- register many devices through modern browser supporting service worker (= not on iOS)
 - send text or url to this devices
 
 > [deviceconsole.com](https://deviceconsole.com)
@@ -53,9 +53,9 @@ This project needs you! If you would like to support this project's further deve
 
 **PayPal**
 
-* **[Donate $5]**: Thank's for creating this project, here's a beer for you!
-* **[Donate $10]**: Keep up the good work, I love it!
-* **[Donate $50]**: I really really want to support this project, great job!
+* **[Donate $5](https://paypal.me/HugoGresse/5)**: Thank's for creating this project, here's a beer for you!
+* **[Donate $10](https://paypal.me/HugoGresse/10)**: Keep up the good work, I love it!
+* **[Donate $50](https://paypal.me/HugoGresse/50)**: I really really want to support this project, great job!
 
 or...
 

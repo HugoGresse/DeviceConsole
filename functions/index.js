@@ -6,9 +6,9 @@ const request = require('request-promise');
 exports.notify = functions.https.onRequest((req, res) => {
     console.log("Receive notification request", req.query)
 
+    const {fcm} = functions.config()
 
     cors(req, res, () => {
-
         const options = {
             method: 'POST',
             uri: 'https://fcm.googleapis.com/fcm/send',
@@ -22,24 +22,30 @@ exports.notify = functions.https.onRequest((req, res) => {
                 "to": req.body.to
             },
             headers: {
-                'Authorization': 'key=AAAAeWvQn04:APA91bGPbi4ohY1DW7zR8e6ENYCzB-fJfI6We68ef7_hJGuKuzfxFgHlNPZ0WA7MT44gr9JfLi3fAtpKKaA52vlQy2p7CkjkwzTW0JGCuhsfXfP50osl6-SwjGYICTkWRSY4az4M5-PS'
+                'Authorization': fcm.authorization
             },
-            json: true // Automatically parses the JSON string in the response
+            json: true
         };
 
         request(options)
             .then(function (response) {
-                console.log('Send push success to ' + req.body.to);
-                res
-                    .status(200)
-                    .header('Access-Control-Allow-Origin', '*')
-                    .send(response);
+                if(response.success){
+                    console.log('Send push success to ' + req.body.to);
+                    res
+                        .status(200)
+                        .header('Access-Control-Allow-Origin', '*')
+                        .send(response);
+                } else {
+                    console.log("⚠️ Push send failed")
+                    res
+                        .status(500)
+                        .header('Access-Control-Allow-Origin', '*')
+                        .send(response);
+                }
             })
             .catch(function (err) {
                 console.log('Send push error to' + req.body.to, err);
                 res.status(500).send(err);
             });
     });
-
-
 });

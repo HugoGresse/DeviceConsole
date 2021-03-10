@@ -10,10 +10,8 @@ import App from './component/App';
 import Devices from './component/devices/Devices';
 import Login from './component/Login'
 import { requireAuth, requireUnauth } from "./auth"
-// import registerServiceWorker from './registerServiceWorker';
 
 import './index.css';
-
 
 function render() {
     ReactDOM.render(

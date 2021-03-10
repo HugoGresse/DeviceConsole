@@ -1,4 +1,5 @@
-import firebase from 'firebase/app';
+import firebase from 'firebase/app'
+import 'firebase/analytics'
 import 'firebase/auth'
 import 'firebase/database'
 import 'firebase/messaging'
@@ -14,3 +15,6 @@ export const firebaseApp = firebase.initializeApp({
 export const firebaseAuth = firebaseApp.auth();
 export const firebaseDb = firebaseApp.database();
 export const firebaseMessaging = firebase.messaging();
+export const firebaseAnalytics = firebase.analytics();
+
+export const SERVER_TIMESTAMP = firebase.database.ServerValue.TIMESTAMP

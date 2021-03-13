@@ -16,12 +16,14 @@ export const firebaseAuthImport = firebase.auth
 export const firebaseAuth = firebase.auth()
 export const firebaseDb = firebaseApp.database()
 
+let firebaseMessagingTemp
 if (firebase.messaging.isSupported()) {
-    export const firebaseMessaging = firebase.messaging()
+    firebaseMessagingTemp = firebase.messaging()
 } else {
     alert('Browser not supported')
-    export const firebaseMessaging = {}
+    firebaseMessagingTemp = {}
 }
+export const firebaseMessaging = firebaseMessagingTemp
 
 export const firebaseAnalytics = firebase.analytics()
 

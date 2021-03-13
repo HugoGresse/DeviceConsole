@@ -14,6 +14,9 @@ exports.notify = functions.https.onRequest((req, res) => {
                         "icon": req.body.image,
                     },
                     "webpush": {
+                        notification: {
+                            requireInteraction: true,
+                        },
                         fcm_options: {
                             "link": req.body.link
                         }

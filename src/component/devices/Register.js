@@ -40,13 +40,6 @@ export class Register extends Component {
         return name
     }
 
-    componentWillMount() {
-        if (this.props.auth.deviceUuid) {
-            // If the device is already registered, monitor notification token refresh
-            this.props.monitorTokenRefresh(this.props.auth.id, this.props.deviceUuid)
-        }
-    }
-
     componentDidUpdate(prevProps, prevState) {
         if (this.props.device && !this.props.device.deviceRegistrationToken && !prevState.modal && !this.state.modal) {
             this.setState({

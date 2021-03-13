@@ -21,10 +21,6 @@ export class Devices extends Component {
     componentWillMount() {
         this.props.loadDevices(this.props.auth.id)
         this.props.listenNotification()
-        if (this.props.auth.deviceUuid) {
-            // If the device is already registered, monitor notification token refresh
-            this.props.monitorTokenRefresh(this.props.auth.id, this.props.deviceUuid)
-        }
     }
 
     componentWillUnmount() {

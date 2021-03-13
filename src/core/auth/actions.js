@@ -5,6 +5,7 @@ import {
   SIGN_IN_SUCCESS,
   SIGN_OUT_SUCCESS
 } from './action-types';
+import { firebaseAuthImport } from '../firebase/firebase'
 
 function authenticate(provider) {
   return dispatch => {
@@ -36,7 +37,7 @@ export function signInSuccess(result) {
 }
 
 export function signInWithGoogle() {
-  const provider = new firebaseAuth.GoogleAuthProvider();
+  const provider = new firebaseAuthImport.GoogleAuthProvider();
   provider.addScope('profile');
 
   return authenticate(provider);

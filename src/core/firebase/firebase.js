@@ -11,10 +11,18 @@ export const firebaseApp = firebase.initializeApp({
     projectId: process.env.REACT_APP_PROJECT_ID,
     appId: process.env.REACT_APP_APPID,
     messagingSenderId: process.env.REACT_APP_MESSAGING_SENDER_ID,
-});
-export const firebaseAuth = firebaseApp.auth();
-export const firebaseDb = firebaseApp.database();
-export const firebaseMessaging = firebase.messaging();
-export const firebaseAnalytics = firebase.analytics();
+})
+export const firebaseAuthImport = firebase.auth
+export const firebaseAuth = firebase.auth()
+export const firebaseDb = firebaseApp.database()
+
+if (firebase.messaging.isSupported()) {
+    export const firebaseMessaging = firebase.messaging()
+} else {
+    alert('Browser not supported')
+    export const firebaseMessaging = {}
+}
+
+export const firebaseAnalytics = firebase.analytics()
 
 export const SERVER_TIMESTAMP = firebase.database.ServerValue.TIMESTAMP

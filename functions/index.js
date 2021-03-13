@@ -1,51 +1,42 @@
 const functions = require('firebase-functions');
+const admin = require('firebase-admin');
 const cors = require('cors')({origin: true});
-const request = require('request-promise');
 
+admin.initializeApp()
 
 exports.notify = functions.https.onRequest((req, res) => {
     console.log("Receive notification request", req.query)
-
-    const {fcm} = functions.config()
-
     cors(req, res, () => {
         const options = {
-            method: 'POST',
-            uri: 'https://fcm.googleapis.com/fcm/send',
-            body: {
-                "notification": {
-                    "title": req.body.title,
-                    "body": req.body.body,
-                    "icon": req.body.image,
-                    "click_action": req.body.link
-                },
-                "to": req.body.to
-            },
-            headers: {
-                'Authorization': fcm.authorization
-            },
-            json: true
+                    "notification": {
+                        "title": req.body.title,
+                        "body": req.body.body,
+                        "icon": req.body.image,
+                    },
+                    "webpush": {
+                        fcm_options: {
+                            "link": req.body.link
+                        }
+                    },
+                    "token": req.body.to
         };
 
-        request(options)
-            .then(function (response) {
-                if(response.success){
-                    console.log('Send push success to ' + req.body.to);
-                    res
-                        .status(200)
-                        .header('Access-Control-Allow-Origin', '*')
-                        .send(response);
-                } else {
-                    console.log("⚠️ Push send failed")
-                    res
-                        .status(500)
-                        .header('Access-Control-Allow-Origin', '*')
-                        .send(response);
-                }
+        admin.messaging().send(options)
+            .then((response) => {
+                // Response is a message ID string.
+                console.log('Successfully sent message:', response);
+                res
+                    .status(200)
+                    .header('Access-Control-Allow-Origin', '*')
+                    .send({ "✅": "🚀" });
             })
-            .catch(function (err) {
-                console.log('Send push error to' + req.body.to, err);
-                res.status(500).send(err);
+            .catch((error) => {
+                console.log('Error sending message:', error);
+                console.log("⚠️ Push send failed")
+                res
+                    .status(500)
+                    .header('Access-Control-Allow-Origin', '*')
+                    .send(error);
             });
     });
 });

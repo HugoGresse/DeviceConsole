@@ -1,4 +1,3 @@
-import firebase from 'firebase';
 import {firebaseMessaging} from '../firebase';
 import uuidv4 from 'uuid/v4';
 import {deviceList} from './device-list';
@@ -20,6 +19,7 @@ import {
     DELETE_DEVICE_SUCCESS
 } from './action-types';
 import {createDeviceUuidCookie, readDeviceUuidCookie, eraseDeviceUuidCookie} from '../utils';
+import { firebaseAnalytics, SERVER_TIMESTAMP } from '../firebase/firebase'
 
 const devicePath = "devices"
 
@@ -33,7 +33,7 @@ export function createDevice(uid, name, os) {
         deviceList.update(deviceUuid, {
             name: name,
             os: os,
-            updatedAt: firebase.database.ServerValue.TIMESTAMP
+            updatedAt: SERVER_TIMESTAMP
         }).then(function () {
             console.info('Device created');
             dispatch(requestNotificationPermission(uid));
@@ -95,7 +95,7 @@ export function loadDevicesSuccess(device) {
 }
 
 export function loadDevices(uid) {
-    return (dispatch, getState) => {
+    return (dispatch) => {
         deviceList.path = uid + '/' + devicePath;
         deviceList.subscribe(dispatch);
     };
@@ -139,7 +139,7 @@ export function setDeviceName(key, name) {
     return dispatch => {
         deviceList.update(key, {
             name: name,
-            updatedAt: firebase.database.ServerValue.TIMESTAMP
+            updatedAt: SERVER_TIMESTAMP
         })
     }
 }
@@ -148,6 +148,7 @@ export function setDeviceName(key, name) {
 /////////////////////// NOTIFICATION
 
 export function sendNotification(device, content) {
+    firebaseAnalytics.logEvent('sendNotification');
     return dispatch => {
         dispatch(sendingNotification(device.key));
         fetch('https://us-central1-deviceconsole-aa589.cloudfunctions.net/notify', {
@@ -163,9 +164,10 @@ export function sendNotification(device, content) {
         })
             .then(function (response) {
                 dispatch(sendNotificationSuccess(device.key));
-            }).catch(function (error) {
-            dispatch(sendNotificationError(device.key, error));
-        });
+            })
+            .catch(function (error) {
+                dispatch(sendNotificationError(device.key, error));
+            });
     }
 }
 
@@ -205,9 +207,8 @@ function notificationReceived(payload) {
 }
 
 export function requestNotificationPermission(uid) {
-    console.log('requestNotificationPermission')
     return dispatch => {
-        firebaseMessaging.requestPermission()
+        Notification.requestPermission()
             .then(function () {
                 console.info('Notification permission granted.');
                 dispatch(getAndUpdateToken(uid));
@@ -224,12 +225,14 @@ export function getAndUpdateToken(uid) {
     // Get Instance ID token. Initially this makes a network call, once retrieved
     // subsequent calls to getToken will return from cache.
     return dispatch => {
-        firebaseMessaging.getToken()
+        firebaseMessaging.getToken({
+            vapidKey: process.env.REACT_APP_VAPID_KEY
+        })
             .then(function (currentToken) {
                 if (currentToken) {
                     // Update device registration on firebase
                     let changes = {};
-                    changes['updatedAt'] = firebase.database.ServerValue.TIMESTAMP;
+                    changes['updatedAt'] = SERVER_TIMESTAMP;
                     changes['deviceRegistrationToken'] = currentToken;
 
                     deviceList.path = uid + '/' + devicePath;
@@ -247,16 +250,6 @@ export function getAndUpdateToken(uid) {
                 console.error('An error occurred while retrieving token. ', error);
                 dispatch(updateDeviceTokenError(error))
             });
-    }
-}
-
-export function monitorTokenRefresh() {
-    return dispatch => {
-        // Callback fired if Instance ID token is updated.
-        firebaseMessaging.onTokenRefresh(function () {
-            console.info('onTokenRefresh');
-            dispatch(getAndUpdateToken(readDeviceUuidCookie()));
-        });
     }
 }
 

@@ -5,7 +5,7 @@
   "homepage": "https://deviceconsole.com/",
   "devDependencies": {
     "react-edit-inline": "^1.0.8",
-    "react-scripts": "1.0.10"
+    "react-scripts": "5.0.1"
   },
   "dependencies": {
     "antd": "^2.13.0",

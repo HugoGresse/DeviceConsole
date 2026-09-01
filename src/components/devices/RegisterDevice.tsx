@@ -58,6 +58,8 @@ export function RegisterDevice() {
           <Col span={24}>Register this device</Col>
           <Col xs={24} sm={12}>
             <Input
+              autoCorrect="off"
+              spellCheck={false}
               value={deviceName}
               onChange={(event) => setDeviceName(event.target.value)}
               onPressEnter={register}

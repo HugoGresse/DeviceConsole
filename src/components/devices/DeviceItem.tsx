@@ -55,6 +55,10 @@ export function DeviceItem({
           <Col xs={24} sm={16} className="inputWithButton">
             <Input
               placeholder="Send a link"
+              inputMode="url"
+              autoCapitalize="none"
+              autoCorrect="off"
+              spellCheck={false}
               disabled={sending}
               value={message}
               onChange={(event) => setMessage(event.target.value)}

@@ -22,7 +22,7 @@ interface NotifyBody {
   link?: string
 }
 
-export const notify = onRequest({ cors: allowedOrigins, maxInstances }, async (req, res) => {
+export const notifyV2 = onRequest({ cors: allowedOrigins, maxInstances }, async (req, res) => {
   const { to, title, body, image, link } = (req.body ?? {}) as NotifyBody
 
   if (!to) {

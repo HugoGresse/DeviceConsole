@@ -8,7 +8,9 @@
     "node": ">=22.22.0"
   },
   "scripts": {
+    "predev": "node scripts/generate-firebase-sw.mjs",
     "dev": "vite",
+    "prebuild": "node scripts/generate-firebase-sw.mjs",
     "build": "tsc --noEmit && vite build",
     "preview": "vite preview",
     "typecheck": "tsc --noEmit",

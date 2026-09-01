@@ -76,7 +76,8 @@ export function sendNotification(device: Device, message: string) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           to: device.deviceRegistrationToken,
-          title: message,
+          title: 'DeviceConsole',
+          body: message,
           link: message,
         }),
       })

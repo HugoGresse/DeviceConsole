@@ -12,39 +12,46 @@ It is a free & open source software that allow a single Google accounts to:
 Requirements
 ------------
 
-1. Install npm:
-
-    brew install npm
+1. Node 22.22+ (`nvm use` picks up `.nvmrc`)
 
 2. Install dependencies
 
-    npm install
+        npm install
+        npm --prefix functions install
 
-3. Run app
+3. Copy `public/firebase-messaging-sw.js.example` to `public/firebase-messaging-sw.js` and fill in
+   your Firebase config, then create a `.env` with the `VITE_*` keys.
 
-    npm start
+4. Run the app
+
+        npm run dev
 
 Dev
 ---
 
-This application currently use [Create React App](https://github.com/facebookincubator/create-react-app).
+React 19 + TypeScript + Redux Toolkit + antd, bundled with Vite. Cloud Functions are TypeScript on
+the Firebase Functions v2 API.
 
 Available Scripts
 -----------------
 
-#### Runs the app in the development mode.
+#### Run the app in development mode
 
-    npm start
+    npm run dev
 
+Open http://localhost:5173 to view it in the browser. Edits hot-reload.
 
-Open http://localhost:3000 to view it in the browser.
-The page will reload if you make edits & you'll see any lint errors in the console & in the browser.
+#### Typecheck and test
+
+    npm run typecheck
+    npm test
 
 #### Release the app
 
     npm run deploy
 
-It bundle the js + minify, deploy the database rules & the website to Firebase Hosting, part of GCP.
+It typechecks, bundles and minifies the js, then deploys the website to Firebase Hosting, part of
+GCP. Deploy the API with `npm --prefix functions run deploy`.
 
 Donations
 ---------

@@ -7,7 +7,7 @@
 /coverage
 
 # production
-/build
+/dist
 
 # misc
 .DS_Store
@@ -24,3 +24,6 @@ yarn-error.log*
 /.idea
 /.firebase
 /public/firebase-messaging-sw.js
+
+# functions build output
+/functions/lib

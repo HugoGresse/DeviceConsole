@@ -70,13 +70,14 @@ body {
   }
 
   /* iOS Safari zooms the whole page when a focused field is under 16px, which then
-     overflows the viewport horizontally. */
-  input,
-  textarea,
-  select,
-  .ant-input,
-  .ant-input-affix-wrapper input,
-  .ant-input-number-input {
-    font-size: 16px;
+     overflows the viewport horizontally. antd injects its component styles into <head> at
+     runtime, after this sheet, so matching its specificity is not enough to win. */
+  html body input,
+  html body textarea,
+  html body select,
+  html body .ant-input,
+  html body .ant-input-affix-wrapper,
+  html body .ant-input-affix-wrapper input {
+    font-size: 16px !important;
   }
 }

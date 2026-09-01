@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { RightCircleOutlined } from '@ant-design/icons'
 import { Button, Col, Input, Modal, Row } from 'antd'
 
@@ -7,6 +7,13 @@ import { selectUser } from '../../core/auth/auth-slice'
 import { selectCurrentDevice, selectIsRegistered } from '../../core/devices/devices-slice'
 import { refreshMessagingToken, registerDevice } from '../../core/devices/devices-thunks'
 import { currentDeviceDescription } from '../../core/utils/device-name'
+import { getMessagingIfSupported } from '../../core/firebase'
+import {
+  currentPushEnvironment,
+  describePushSupport,
+  PUSH_SUPPORT_MESSAGES,
+  type PushSupport,
+} from '../../core/utils/push-support'
 
 export function RegisterDevice() {
   const dispatch = useAppDispatch()
@@ -16,8 +23,28 @@ export function RegisterDevice() {
 
   const [description] = useState(currentDeviceDescription)
   const [deviceName, setDeviceName] = useState(description.name)
+  const [pushSupport, setPushSupport] = useState<PushSupport | null>(null)
+  const [dismissed, setDismissed] = useState(false)
 
-  const needsToken = currentDevice !== null && currentDevice.deviceRegistrationToken === null
+  useEffect(() => {
+    let active = true
+    void getMessagingIfSupported().then((messaging) => {
+      if (active) setPushSupport(describePushSupport(currentPushEnvironment(), messaging !== null))
+    })
+    return () => {
+      active = false
+    }
+  }, [])
+
+  const canRetry = pushSupport === 'supported'
+  const modalMessage =
+    pushSupport === null
+      ? null
+      : pushSupport === 'supported'
+        ? 'This device has no notification token yet. Allow browser notifications, then retry to finish registration.'
+        : PUSH_SUPPORT_MESSAGES[pushSupport]
+  const needsToken =
+    !dismissed && currentDevice !== null && currentDevice.deviceRegistrationToken === null
 
   const register = () => {
     if (!user || !deviceName.trim()) return
@@ -48,18 +75,16 @@ export function RegisterDevice() {
       )}
 
       <Modal
-        open={needsToken}
+        open={needsToken && pushSupport !== null}
         title="Your device is not fully registered"
         okText="Retry"
-        cancelText="Discard"
+        cancelText="Close"
+        okButtonProps={{ style: canRetry ? undefined : { display: 'none' } }}
         onOk={() => user && dispatch(refreshMessagingToken(user.id))}
-        onCancel={() => {}}
+        onCancel={() => setDismissed(true)}
         closable={false}
       >
-        <p>
-          This device has no notification token yet. Allow browser notifications, then retry to
-          finish registration.
-        </p>
+        <p>{modalMessage}</p>
       </Modal>
     </div>
   )

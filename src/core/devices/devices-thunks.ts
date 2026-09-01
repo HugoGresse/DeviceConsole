@@ -2,11 +2,6 @@ import { getToken, onMessage } from 'firebase/messaging'
 
 import { getMessagingIfSupported, trackEvent } from '../firebase'
 import { eraseDeviceUuid, readDeviceUuid, writeDeviceUuid } from '../utils/cookies'
-import {
-  currentPushEnvironment,
-  describePushSupport,
-  PUSH_SUPPORT_MESSAGES,
-} from '../utils/push-support'
 import { removeDevice, subscribeToDevices, updateDevice } from './device-sync'
 import {
   currentDeviceUuidChanged,
@@ -99,12 +94,10 @@ export function refreshMessagingToken(uid: string) {
     const deviceUuid = readDeviceUuid()
     if (!deviceUuid) return
 
+    // An unsupported browser is explained in place by the registration modal, so it is not
+    // also raised as a transient error.
     const messaging = await getMessagingIfSupported()
-    if (!messaging) {
-      const support = describePushSupport(currentPushEnvironment(), false)
-      if (support !== 'supported') dispatch(errorRaised(PUSH_SUPPORT_MESSAGES[support]))
-      return
-    }
+    if (!messaging) return
 
     if ((await Notification.requestPermission()) !== 'granted') {
       dispatch(errorRaised('Notification permission denied'))

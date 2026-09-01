@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest'
 import { describeAuthError } from '../core/auth/auth-errors'
 import { parseCookies } from '../core/utils/cookies'
 import { describeDevice } from '../core/utils/device-name'
+import { describePushSupport } from '../core/utils/push-support'
 import { formatRelativeTime } from '../core/utils/relative-time'
 import { toDeviceList } from '../core/devices/device-mapper'
 
@@ -121,5 +122,43 @@ describe('describeAuthError', () => {
 
   it('handles a thrown value with no code or message', () => {
     expect(describeAuthError(undefined)).toBe('Something went wrong, try again')
+  })
+})
+
+describe('describePushSupport', () => {
+  const iphone = {
+    userAgent: 'Mozilla/5.0 (iPhone; CPU iPhone OS 26_5 like Mac OS X) AppleWebKit/605.1.15 Safari/604.1',
+    standalone: false,
+    maxTouchPoints: 5,
+  }
+
+  it('reports support when the SDK says messaging works', () => {
+    expect(describePushSupport(iphone, true)).toBe('supported')
+  })
+
+  it('asks an iOS Safari tab to install to the Home Screen', () => {
+    expect(describePushSupport(iphone, false)).toBe('ios-needs-install')
+  })
+
+  it('does not ask again once installed', () => {
+    expect(describePushSupport({ ...iphone, standalone: true }, false)).toBe('unsupported')
+  })
+
+  it('treats a touch-capable iPad reporting as Macintosh as iOS', () => {
+    const ipad = {
+      userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 Safari/605.1',
+      standalone: false,
+      maxTouchPoints: 5,
+    }
+    expect(describePushSupport(ipad, false)).toBe('ios-needs-install')
+  })
+
+  it('reports plain unsupported for a desktop browser', () => {
+    const desktop = {
+      userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 Chrome/140.0',
+      standalone: false,
+      maxTouchPoints: 0,
+    }
+    expect(describePushSupport(desktop, false)).toBe('unsupported')
   })
 })

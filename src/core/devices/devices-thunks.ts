@@ -2,6 +2,11 @@ import { getToken, onMessage } from 'firebase/messaging'
 
 import { getMessagingIfSupported, trackEvent } from '../firebase'
 import { eraseDeviceUuid, readDeviceUuid, writeDeviceUuid } from '../utils/cookies'
+import {
+  currentPushEnvironment,
+  describePushSupport,
+  PUSH_SUPPORT_MESSAGES,
+} from '../utils/push-support'
 import { removeDevice, subscribeToDevices, updateDevice } from './device-sync'
 import {
   currentDeviceUuidChanged,
@@ -96,7 +101,8 @@ export function refreshMessagingToken(uid: string) {
 
     const messaging = await getMessagingIfSupported()
     if (!messaging) {
-      dispatch(errorRaised('Push notifications are not supported by this browser'))
+      const support = describePushSupport(currentPushEnvironment(), false)
+      if (support !== 'supported') dispatch(errorRaised(PUSH_SUPPORT_MESSAGES[support]))
       return
     }
 

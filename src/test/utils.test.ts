@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
+import { describeAuthError } from '../core/auth/auth-errors'
 import { parseCookies } from '../core/utils/cookies'
 import { describeDevice } from '../core/utils/device-name'
 import { formatRelativeTime } from '../core/utils/relative-time'
@@ -80,5 +81,45 @@ describe('toDeviceList', () => {
 
   it('falls back to the key when the device has no name', () => {
     expect(toDeviceList({ 'uuid-2': {} })[0]?.name).toBe('uuid-2')
+  })
+})
+
+describe('describeAuthError', () => {
+  it('maps a known Firebase code to a readable message', () => {
+    expect(describeAuthError({ code: 'auth/invalid-credential', message: 'raw' })).toBe(
+      'Wrong email or password',
+    )
+  })
+
+  it('maps the sign-up specific codes', () => {
+    expect(describeAuthError({ code: 'auth/email-already-in-use' })).toBe(
+      'An account already exists for that email',
+    )
+    expect(describeAuthError({ code: 'auth/weak-password' })).toBe(
+      'Passwords must be at least 6 characters',
+    )
+  })
+
+  it('prefers the mapped message over the raw SDK text', () => {
+    const raw = 'Firebase: Error (auth/invalid-email).'
+    expect(describeAuthError({ code: 'auth/invalid-email', message: raw })).not.toBe(raw)
+  })
+
+  it('never leaks the raw SDK string for an unmapped code', () => {
+    const raw = 'Firebase: Error (auth/some-new-code).'
+    expect(describeAuthError({ code: 'auth/some-new-code', message: raw })).toBe(
+      'Something went wrong, try again',
+    )
+  })
+
+  it('hides whether the account exists, however the SDK reports it', () => {
+    const sameMessage = 'Wrong email or password'
+    expect(describeAuthError({ code: 'auth/user-not-found' })).toBe(sameMessage)
+    expect(describeAuthError({ code: 'auth/wrong-password' })).toBe(sameMessage)
+    expect(describeAuthError({ code: 'auth/invalid-credential' })).toBe(sameMessage)
+  })
+
+  it('handles a thrown value with no code or message', () => {
+    expect(describeAuthError(undefined)).toBe('Something went wrong, try again')
   })
 })

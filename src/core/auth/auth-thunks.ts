@@ -1,14 +1,21 @@
-import { GoogleAuthProvider, onAuthStateChanged, signInWithPopup, signOut, type User } from 'firebase/auth'
+import {
+  createUserWithEmailAndPassword,
+  GoogleAuthProvider,
+  onAuthStateChanged,
+  sendPasswordResetEmail,
+  signInWithEmailAndPassword,
+  signInWithPopup,
+  signOut,
+  type User,
+} from 'firebase/auth'
 
 import { firebaseAuth } from '../firebase'
 import { gravatarUrl } from '../utils/gravatar'
+import { describeAuthError } from './auth-errors'
 import { authResolved, signInFailed, type AuthUser } from './auth-slice'
 import type { AppDispatch } from '../store'
 
-const SIGN_IN_ERRORS: Record<string, string> = {
-  'auth/popup-closed-by-user': 'Popup closed',
-  'auth/cancelled-popup-request': 'Popup closed',
-}
+export type AuthResult = { ok: true } | { ok: false; message: string }
 
 async function toAuthUser(user: User): Promise<AuthUser> {
   return {
@@ -28,23 +35,50 @@ export function observeAuth(dispatch: AppDispatch): Promise<void> {
         resolve()
       },
       (error) => {
-        dispatch(signInFailed(error.message))
+        dispatch(signInFailed(describeAuthError(error)))
         resolve()
       },
     )
   })
 }
 
-export function signInWithGoogle() {
-  return async (dispatch: AppDispatch): Promise<void> => {
-    const provider = new GoogleAuthProvider()
-    provider.addScope('profile')
+function runSignIn(signIn: () => Promise<{ user: User }>) {
+  return async (dispatch: AppDispatch): Promise<AuthResult> => {
     try {
-      const { user } = await signInWithPopup(firebaseAuth, provider)
+      const { user } = await signIn()
       dispatch(authResolved(await toAuthUser(user)))
+      return { ok: true }
     } catch (error) {
-      const { code, message } = error as { code?: string; message: string }
-      dispatch(signInFailed((code && SIGN_IN_ERRORS[code]) ?? message))
+      const message = describeAuthError(error)
+      dispatch(signInFailed(message))
+      return { ok: false, message }
+    }
+  }
+}
+
+export function signInWithGoogle() {
+  const provider = new GoogleAuthProvider()
+  provider.addScope('profile')
+  return runSignIn(() => signInWithPopup(firebaseAuth, provider))
+}
+
+export function signInWithEmail(email: string, password: string) {
+  return runSignIn(() => signInWithEmailAndPassword(firebaseAuth, email, password))
+}
+
+export function signUpWithEmail(email: string, password: string) {
+  return runSignIn(() => createUserWithEmailAndPassword(firebaseAuth, email, password))
+}
+
+export function sendPasswordReset(email: string) {
+  return async (dispatch: AppDispatch): Promise<AuthResult> => {
+    try {
+      await sendPasswordResetEmail(firebaseAuth, email)
+      return { ok: true }
+    } catch (error) {
+      const message = describeAuthError(error)
+      dispatch(signInFailed(message))
+      return { ok: false, message }
     }
   }
 }

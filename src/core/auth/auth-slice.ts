@@ -29,6 +29,9 @@ const authSlice = createSlice({
       state.user = null
       state.error = action.payload
     },
+    authErrorCleared(state) {
+      state.error = null
+    },
   },
   selectors: {
     selectUser: (state) => state.user,
@@ -38,7 +41,7 @@ const authSlice = createSlice({
   },
 })
 
-export const { authResolved, signInFailed } = authSlice.actions
+export const { authResolved, signInFailed, authErrorCleared } = authSlice.actions
 export const { selectUser, selectIsAuthenticated, selectAuthInitialized, selectAuthError } =
   authSlice.selectors
 export const authReducer = authSlice.reducer

@@ -1,6 +1,7 @@
 {
-  "short_name": "Device Console",
-  "name": "DeviceConsole is a fast way to **share** a text/url to one devices of a fleet",
+  "name": "DeviceConsole",
+  "short_name": "DeviceConsole",
+  "description": "DeviceConsole is a fast way to share a text/url to one devices of a fleet",
   "icons": [
     {
      "src": "\/android-icon-36x36.png",
